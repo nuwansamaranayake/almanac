@@ -1,0 +1,255 @@
+[
+  {
+    "sku_id": "SKU-1042",
+    "sku_name": "Sparkling Water 500ml (12-pack)",
+    "category": "beverages",
+    "location": {"store_id": "ST-01", "name": "Riverside Grocer", "region": "IN-MH"},
+    "forecast_version": "fc_2026w29_v3",
+    "horizon_weeks": 1,
+    "data_quality": {"confidence": 0.86, "stockout_adjusted": true, "notes": "one 2-day stockout in week 26 repaired via lost-sales estimate"},
+    "quantile_forecast": {"p10": 48, "p50": 61, "p90": 79, "unit": "packs"},
+    "active_signals": [
+      {
+        "signal_id": "sig_2210",
+        "event": "street_festival",
+        "window": ["2026-08-14", "2026-08-16"],
+        "affected_categories": ["beverages", "snacks"],
+        "direction": "increase",
+        "prior_elasticity": {"dist": "lognormal", "p50": 1.35, "p90": 1.8},
+        "provenance": {"source": "cityfest.org/schedule", "retrieved": "2026-07-19"},
+        "verification": {"status": "confirmed", "owner": "store_owner", "confirmed_at": "2026-07-20"},
+        "signal_class": {"class_id": "sc_festival_beverages", "state": "live", "earned_wape_lift": 6.2, "windows_backtested": 9}
+      }
+    ],
+    "action_envelope": {
+      "baseline_order": 60,
+      "recommended_order": 82,
+      "safe_range": [70, 92],
+      "latest_order_date": "2026-08-11",
+      "cash_required": 984.00,
+      "currency": "USD",
+      "expected_service_level": 0.95,
+      "downside_exposure": {"if_signal_wrong_overage_cost": 88.0, "if_no_order_stockout_cost": 910.0}
+    },
+    "regret_analysis": {"best_on_average": 82, "smallest_worst_case": 74, "most_cash_protective": 66},
+    "status": "awaiting_owner_approval"
+  },
+  {
+    "sku_id": "SKU-2301",
+    "sku_name": "Electrolyte Sachets (box of 10)",
+    "category": "beverages",
+    "location": {"store_id": "ST-01", "name": "Riverside Grocer", "region": "IN-MH"},
+    "forecast_version": "fc_2026w29_v3",
+    "horizon_weeks": 1,
+    "data_quality": {"confidence": 0.79, "stockout_adjusted": false, "notes": "clean history"},
+    "quantile_forecast": {"p10": 22, "p50": 30, "p90": 41, "unit": "boxes"},
+    "active_signals": [
+      {
+        "signal_id": "sig_2244",
+        "event": "heat_wave",
+        "window": ["2026-07-24", "2026-07-30"],
+        "affected_categories": ["beverages"],
+        "direction": "increase",
+        "prior_elasticity": {"dist": "lognormal", "p50": 1.22, "p90": 1.5},
+        "provenance": {"source": "api.weather-service.example/forecast?loc=mumbai", "retrieved": "2026-07-21"},
+        "verification": {"status": "confirmed", "owner": "store_owner", "confirmed_at": "2026-07-21"},
+        "signal_class": {"class_id": "sc_heatwave_beverages", "state": "live", "earned_wape_lift": 3.4, "windows_backtested": 12}
+      }
+    ],
+    "action_envelope": {
+      "baseline_order": 30,
+      "recommended_order": 38,
+      "safe_range": [33, 44],
+      "latest_order_date": "2026-07-23",
+      "cash_required": 152.00,
+      "currency": "USD",
+      "expected_service_level": 0.93,
+      "downside_exposure": {"if_signal_wrong_overage_cost": 24.0, "if_no_order_stockout_cost": 168.0}
+    },
+    "regret_analysis": {"best_on_average": 38, "smallest_worst_case": 35, "most_cash_protective": 31},
+    "status": "awaiting_owner_approval"
+  },
+  {
+    "sku_id": "SKU-5580",
+    "sku_name": "Cast-Iron Skillet 26cm",
+    "category": "kitchenware",
+    "location": {"store_id": "ST-02", "name": "Hillside Home Store", "region": "IN-MH"},
+    "forecast_version": "fc_2026w29_v3",
+    "horizon_weeks": 4,
+    "data_quality": {"confidence": 0.61, "stockout_adjusted": false, "notes": "intermittent demand; Croston-class model used"},
+    "quantile_forecast": {"p10": 0, "p50": 2, "p90": 5, "unit": "units"},
+    "active_signals": [],
+    "action_envelope": {
+      "baseline_order": 3,
+      "recommended_order": 3,
+      "safe_range": [2, 5],
+      "latest_order_date": "2026-08-05",
+      "cash_required": 141.00,
+      "currency": "USD",
+      "expected_service_level": 0.90,
+      "downside_exposure": {"if_signal_wrong_overage_cost": 0.0, "if_no_order_stockout_cost": 94.0}
+    },
+    "regret_analysis": {"best_on_average": 3, "smallest_worst_case": 3, "most_cash_protective": 2},
+    "status": "awaiting_owner_approval"
+  },
+  {
+    "sku_id": "SKU-3390",
+    "sku_name": "Basmati Rice 5kg",
+    "category": "staples",
+    "location": {"store_id": "ST-01", "name": "Riverside Grocer", "region": "IN-MH"},
+    "forecast_version": "fc_2026w29_v3",
+    "horizon_weeks": 2,
+    "data_quality": {"confidence": 0.72, "stockout_adjusted": true, "notes": "week 24 sales censored by 5-day stockout; demand repaired upward from 41 to est. 63"},
+    "quantile_forecast": {"p10": 52, "p50": 66, "p90": 84, "unit": "bags"},
+    "active_signals": [],
+    "action_envelope": {
+      "baseline_order": 66,
+      "recommended_order": 66,
+      "safe_range": [58, 76],
+      "latest_order_date": "2026-07-28",
+      "cash_required": 528.00,
+      "currency": "USD",
+      "expected_service_level": 0.94,
+      "downside_exposure": {"if_signal_wrong_overage_cost": 0.0, "if_no_order_stockout_cost": 640.0}
+    },
+    "regret_analysis": {"best_on_average": 66, "smallest_worst_case": 60, "most_cash_protective": 55},
+    "status": "awaiting_owner_approval"
+  },
+  {
+    "sku_id": "SKU-4110",
+    "sku_name": "Instant Noodles Masala (carton of 24)",
+    "category": "snacks",
+    "location": {"store_id": "ST-03", "name": "Campus Corner", "region": "IN-MH"},
+    "forecast_version": "fc_2026w29_v3",
+    "horizon_weeks": 1,
+    "data_quality": {"confidence": 0.83, "stockout_adjusted": false, "notes": "clean history"},
+    "quantile_forecast": {"p10": 14, "p50": 19, "p90": 27, "unit": "cartons"},
+    "active_signals": [
+      {
+        "signal_id": "sig_2251",
+        "event": "school_term_start",
+        "window": ["2026-08-01", "2026-08-01"],
+        "affected_categories": ["snacks", "beverages"],
+        "direction": "increase",
+        "prior_elasticity": {"dist": "lognormal", "p50": 1.18, "p90": 1.45},
+        "provenance": {"source": "district-education.example/calendar", "retrieved": "2026-07-18"},
+        "verification": {"status": "confirmed", "owner": "store_owner", "confirmed_at": "2026-07-19"},
+        "signal_class": {"class_id": "sc_schoolterm_snacks", "state": "live", "earned_wape_lift": 2.1, "windows_backtested": 6}
+      }
+    ],
+    "action_envelope": {
+      "baseline_order": 19,
+      "recommended_order": 23,
+      "safe_range": [20, 27],
+      "latest_order_date": "2026-07-30",
+      "cash_required": 276.00,
+      "currency": "USD",
+      "expected_service_level": 0.92,
+      "downside_exposure": {"if_signal_wrong_overage_cost": 40.0, "if_no_order_stockout_cost": 205.0}
+    },
+    "regret_analysis": {"best_on_average": 23, "smallest_worst_case": 21, "most_cash_protective": 19},
+    "status": "awaiting_owner_approval"
+  },
+  {
+    "sku_id": "SKU-6620",
+    "sku_name": "Umbrella Compact Auto-Open",
+    "category": "seasonal",
+    "location": {"store_id": "ST-02", "name": "Hillside Home Store", "region": "IN-MH"},
+    "forecast_version": "fc_2026w29_v3",
+    "horizon_weeks": 2,
+    "data_quality": {"confidence": 0.68, "stockout_adjusted": false, "notes": "monsoon-seasonal; hierarchical pooling with category"},
+    "quantile_forecast": {"p10": 8, "p50": 15, "p90": 26, "unit": "units"},
+    "active_signals": [
+      {
+        "signal_id": "sig_2260",
+        "event": "heavy_rain_forecast",
+        "window": ["2026-07-26", "2026-08-02"],
+        "affected_categories": ["seasonal"],
+        "direction": "increase",
+        "prior_elasticity": {"dist": "lognormal", "p50": 1.4, "p90": 2.1},
+        "provenance": {"source": "api.weather-service.example/forecast?loc=mumbai", "retrieved": "2026-07-21"},
+        "verification": {"status": "pending_owner", "owner": "store_owner", "confirmed_at": null},
+        "signal_class": {"class_id": "sc_rain_seasonal", "state": "quarantine", "earned_wape_lift": null, "windows_backtested": 2}
+      }
+    ],
+    "action_envelope": {
+      "baseline_order": 15,
+      "recommended_order": 15,
+      "safe_range": [10, 22],
+      "latest_order_date": "2026-07-24",
+      "cash_required": 105.00,
+      "currency": "USD",
+      "expected_service_level": 0.90,
+      "downside_exposure": {"if_signal_wrong_overage_cost": 0.0, "if_no_order_stockout_cost": 133.0}
+    },
+    "regret_analysis": {"best_on_average": 15, "smallest_worst_case": 12, "most_cash_protective": 10},
+    "status": "signal_quarantined_no_influence"
+  },
+  {
+    "sku_id": "SKU-7705",
+    "sku_name": "Dark Chocolate Bar 80g",
+    "category": "confectionery",
+    "location": {"store_id": "ST-01", "name": "Riverside Grocer", "region": "IN-MH"},
+    "forecast_version": "fc_2026w29_v3",
+    "horizon_weeks": 1,
+    "data_quality": {"confidence": 0.88, "stockout_adjusted": false, "notes": "overstock; markdown candidate"},
+    "quantile_forecast": {"p10": 18, "p50": 25, "p90": 34, "unit": "bars"},
+    "active_signals": [
+      {
+        "signal_id": "sig_2272",
+        "event": "supplier_delay",
+        "window": ["2026-07-22", "2026-08-05"],
+        "affected_categories": ["confectionery"],
+        "direction": "decrease_supply",
+        "prior_elasticity": {"dist": "lognormal", "p50": 1.0, "p90": 1.15},
+        "provenance": {"source": "supplier_inbox:msg_5561", "retrieved": "2026-07-20", "language": "hi", "quoted": "shipment delayed two weeks"},
+        "verification": {"status": "confirmed", "owner": "store_owner", "confirmed_at": "2026-07-20"},
+        "signal_class": {"class_id": "sc_supplier_leadtime", "state": "live", "earned_wape_lift": 4.9, "windows_backtested": 8}
+      }
+    ],
+    "action_envelope": {
+      "baseline_order": 25,
+      "recommended_order": 0,
+      "safe_range": [0, 0],
+      "latest_order_date": "2026-07-22",
+      "cash_required": 0.00,
+      "currency": "USD",
+      "expected_service_level": 0.91,
+      "downside_exposure": {"if_signal_wrong_overage_cost": 0.0, "if_no_order_stockout_cost": 30.0},
+      "recommendation_note": "current stock covers demand through supplier delay; markdown 15% suggested to clear before expiry"
+    },
+    "regret_analysis": {"best_on_average": 0, "smallest_worst_case": 0, "most_cash_protective": 0},
+    "status": "awaiting_owner_approval"
+  },
+  {
+    "sku_id": "SKU-8890",
+    "sku_name": "Ground Coffee 250g",
+    "category": "beverages",
+    "location": {"store_id": "ST-03", "name": "Campus Corner", "region": "IN-MH"},
+    "forecast_version": "fc_2026w28_v2",
+    "horizon_weeks": 1,
+    "data_quality": {"confidence": 0.81, "stockout_adjusted": false, "notes": "closed period; forecast autopsy attached"},
+    "quantile_forecast": {"p10": 26, "p50": 34, "p90": 45, "unit": "bags"},
+    "active_signals": [],
+    "action_envelope": {
+      "baseline_order": 34,
+      "recommended_order": 34,
+      "safe_range": [29, 40],
+      "latest_order_date": "2026-07-14",
+      "cash_required": 238.00,
+      "currency": "USD",
+      "expected_service_level": 0.93,
+      "downside_exposure": {"if_signal_wrong_overage_cost": 0.0, "if_no_order_stockout_cost": 210.0}
+    },
+    "regret_analysis": {"best_on_average": 34, "smallest_worst_case": 31, "most_cash_protective": 28},
+    "forecast_autopsy": {
+      "period": "2026-w28",
+      "forecast_p50": 34,
+      "actual": 41,
+      "wape": 0.17,
+      "miss_decomposition": {"model_error": 0.06, "data_quality_error": 0.02, "signal_error": 0.0, "owner_override_error": 0.09},
+      "note": "owner manually reduced order below recommendation; override accounted for most of the miss"
+    },
+    "status": "closed"
+  }
+]

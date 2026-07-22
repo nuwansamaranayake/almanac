@@ -52,3 +52,17 @@ Derived from the evaluation plan; the Phase 1 harness will enforce these as gate
   regret against the action envelopes.
 - **Calibration honesty:** realized error is published per release, so failure becomes visible
   calibration rather than silent erosion of trust.
+
+## Novelty (scoped)
+
+As of July 2026, we surveyed the open-source retail demand-forecasting and inventory-optimization
+field: statistical forecasting libraries (Nixtla statsforecast and mlforecast, Prophet, Darts,
+GluonTS), inventory-optimization packages, and the newer LLM-wrapper "AI forecasting" projects.
+Across that field, no single open tool combines all four of these: deterministic censored-demand
+(stockout) repair before modeling; external context signals that must earn live influence through
+public, held-out backtests rather than acting on day one; regret-mapped decision envelopes instead
+of a single point order quantity; and per-period miss autopsies that attribute error across model,
+data quality, signal, and human override. Each element exists somewhere in isolation. The bet is
+that the combination, with the LLM confined to sensing and deterministic code owning every number,
+is what the field has not yet assembled. This is a claim scoped to the tools we reviewed as of July
+2026, not a claim of absolute first or only.

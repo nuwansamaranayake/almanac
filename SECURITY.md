@@ -39,3 +39,9 @@ No secret is committed. Provider keys, POS tokens, and IMAP credentials live in 
 never a provider SDK called directly, so keys and trace logging are handled in one audited place. The
 zero-key demo path runs entirely on the synthetic dataset, so nobody has to expose real credentials to
 evaluate the tool.
+
+## Reporting a vulnerability
+
+Report suspected vulnerabilities privately to **nuwans@hotmail.com**. Do not open a public issue.
+You will receive an acknowledgment within 72 hours. Please allow time to investigate and ship a fix
+before any public disclosure; a coordinated disclosure timeline will be agreed with you.

@@ -21,7 +21,10 @@ from .repair import DailySale
 
 REQUIRED_COLUMNS = ["sku", "date", "units_sold", "stockout"]
 _TRUE = {"1", "true", "yes", "y"}
-_FALSE = {"0", "false", "no", "n", ""}
+# The empty string is deliberately NOT in _FALSE: a blank or missing stockout cell must
+# raise the row-numbered IngestError, never silently import as False (it would skew the
+# censored-demand repair).
+_FALSE = {"0", "false", "no", "n"}
 
 
 class SkuBatch(BaseModel):

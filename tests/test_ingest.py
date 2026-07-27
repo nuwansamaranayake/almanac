@@ -24,6 +24,8 @@ def test_parses_batches_with_attrs_and_flags():
     ("sku,date,units_sold,stockout\nA,2026-06-01,x,0\n", "bad units_sold"),
     ("sku,date,units_sold,stockout\nA,2026-06-01,-2,0\n", "negative"),
     ("sku,date,units_sold,stockout\nA,2026-06-01,5,maybe\n", "bad stockout"),
+    ("sku,date,units_sold,stockout\nA,2026-06-01,5,\n", "bad stockout"),      # blank cell
+    ("sku,date,units_sold,stockout\nA,2026-06-01,5\n", "bad stockout"),       # truncated row
     ("sku,date,units_sold,stockout\nA,2026-06-01,5,0\nA,2026-06-01,6,0\n", "duplicate"),
     ("sku,date,units_sold,stockout\n", "no data rows"),
 ])

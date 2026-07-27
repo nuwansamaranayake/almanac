@@ -7,6 +7,31 @@ its thresholds before a release is cut.
 Phase 1 statistical core exists (see ROADMAP.md). The numbers below are the targets that harness will
 enforce once wired — they are goals, not achieved measurements. No eval report has been published yet.
 
+## Phase 1 acceptance thresholds (written before the harness, 2026-07-27)
+
+Phase 1 ships the deterministic core loop (CSV ingest, censored-demand repair, seasonal
+weekday forecast with empirical intervals, newsvendor-style action envelopes, miss-autopsy
+stubs), so its bounds measure that loop. The suite is deterministic and keyless: a seeded
+synthetic sales generator with known weekday seasonality and planted stockouts (the truth is
+known because we planted it), run end to end through the real engine modules.
+`scripts/eval.py` exits nonzero on any miss and writes a byte-reproducible `eval_report.md`.
+
+| Metric | Definition | Bound |
+|---|---|---|
+| Repair error | MAPE of imputed demand vs the true planted demand on stockout-flagged days | <= 20% |
+| Forecast MAPE | MAPE of P50 vs true demand on held-out synthetic weeks (never seen in training) | <= 25% |
+| Envelope monotonicity | share of service-level steps where a higher service level shrinks the order-quantity upper bound | = 0 violations (score 1.0) |
+| Envelope sanity | share of envelopes with lower <= point <= upper | = 1.0 |
+| Reproducibility | two consecutive `python scripts/eval.py` runs | byte-identical reports |
+
+The LLM context-sensor stage is measured separately and key-gated: `scripts/eval_llm.py`
+extracts demand signals from a planted event note and pre-authored paraphrases through the
+real gateway and compares canonicalized anchors (`signal_type:direction`, schema-enforced
+enums, never model-invented labels). Its bounds, stated before its first run: planted-anchor
+recall >= 0.5 and paraphrase anchor Jaccard (min) >= 0.6 — the same invariant declared in
+`contracts/context-sensor-stability.yaml` (Seismograph DSL). Never a required keyless check,
+never a silent skip: the deterministic report states loudly whether the key-gated section ran.
+
 ## What good means
 
 Almanac is good when its numbers beat the naive baseline, when the LLM signal layer's contribution is

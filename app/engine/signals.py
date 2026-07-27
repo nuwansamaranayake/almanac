@@ -105,6 +105,13 @@ class CompletesJson(Protocol):
                  json_schema: dict | None = None, temperature: float = 0.0): ...
 
 
+# Phase 1 runs single-store: the sensor must know what the store sells or demand
+# DIRECTION is ill-posed (observed live: "heat wave" flip-flopped increase/decrease with
+# no store context — see FAILURES.md FAIL-0001). Configurable per store in Phase 2.
+DEFAULT_STORE_CONTEXT = ("a neighborhood convenience store selling beverages, snacks, "
+                         "bread, dairy, and ice cream")
+
+
 def _claim_id(source: str, anchor: str, statement: str) -> str:
     return hashlib.sha256(f"{source}|{anchor}|{statement}".encode()).hexdigest()[:16]
 
@@ -129,6 +136,7 @@ def extract_signals(
     model: str,
     note_text: str,
     source_name: str,
+    store_context: str = DEFAULT_STORE_CONTEXT,
 ) -> list[DemandSignal]:
     """LLM senses the note; deterministic gates dispose.
 
@@ -142,10 +150,11 @@ def extract_signals(
         model=model,
         messages=[
             {"role": "system",
-             "content": ("Extract demand-relevant context signals from the store owner's "
-                         "note. One signal per distinct real-world event. Use ONLY the "
-                         "closed vocabularies for signal_type, direction (expected effect "
-                         "on demand), and magnitude. window_start/window_end are "
+             "content": (f"The store is {store_context}. Extract demand-relevant context "
+                         "signals from the store owner's note. One signal per distinct "
+                         "real-world event. Use ONLY the closed vocabularies for "
+                         "signal_type, direction (the expected effect on THIS store's "
+                         "demand), and magnitude. window_start/window_end are "
                          "YYYY-MM-DD dates when the note states or clearly implies them, "
                          "else empty strings. quote is a VERBATIM substring of the note "
                          "that evidences the signal. statement is one factual sentence. "

@@ -1,0 +1,26 @@
+# Seismograph behavioral contract for Almanac's LLM context-sensor stage (Signal Scout).
+# Lives in this repo (contracts version with the prompts they protect) and validates
+# against Seismograph's contract DSL. Executed today by scripts/eval_llm.py (key-gated);
+# execution via Seismograph's own runner arrives with its Phase 2 HTTP SUT adapter.
+contract: almanac-context-sensor-stability
+subject: signal-scout
+invariants:
+  # Compared on canonical anchors (`signal_type:direction`, both closed enums in the
+  # extraction schema), never on model-invented labels: naming varies across paraphrases
+  # even when the sensed events are identical (the portfolio's canonicalize-then-compare
+  # lesson).
+  - field: signal_anchors
+    under: [paraphrase, repeat_run]
+    relation: jaccard_at_least
+    threshold: 0.6
+allowed_variation:
+  - field: statement_wording
+    rule: semantically_equivalent
+run_policy: {samples: 3, configs: 1, confidence: 0.9}
+gate: {max_decision_flip_rate: 0.4}
+probes:
+  - id: note-festival-heatwave
+    input: |
+      The city street festival runs Friday 2026-08-14 through Sunday 2026-08-16 two
+      blocks from the store; expect big crowds all three days. Also the heat wave is
+      forecast to hold through the whole week.

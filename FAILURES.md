@@ -50,3 +50,32 @@ the *diagnosed* root cause separately (Standard 5).
   step the README gives a stranger); Dockerfile installs git before `pip install`.
 - **Doctrine link**: Standard 1 (root cause from the real log, not a retry) and Standard 2 (the
   smoke gate exists to catch exactly this before anyone calls the estate "green").
+
+## FAIL-0004 — First real eval_llm run: paraphrase jaccard 0.00 against a 0.6 bound
+
+- **Date**: 2026-07-27
+- **Surface**: `scripts/eval_llm.py` (key-gated context-sensor eval, model
+  `google/gemini-2.5-flash` via the gateway), first live run.
+- **Reported symptom**: `EVAL_LLM FAILED` — planted-anchor recall 0.50 (bound 0.5, barely
+  passing) and paraphrase jaccard (min) 0.00 against the contract's 0.6 bound. The base
+  note extracted `weather:decrease` for a heat wave; one paraphrase produced an anchor set
+  with no overlap at all.
+- **Diagnosed cause**: A probe rerun on the failing paraphrase returned `weather:increase`
+  — the heat-wave DIRECTION flip-flopped between runs. The sensing task was ill-posed: the
+  prompt asked for "expected effect on demand" without saying demand for *what*. Whether a
+  heat wave raises or lowers demand genuinely depends on what the store sells; the model
+  was being asked to guess missing context, and the guess was unstable. A second hazard sat
+  beside it: the pre-authored paraphrase contained a Unicode em dash, an avoidable
+  round-trip risk for the verbatim `span_anchor` quote gate.
+- **Root cause**: Under-specified sensing task (no store context in the prompt), not model
+  flakiness. Canonical anchors (`signal_type:direction`) did their job: they made the
+  instability measurable instead of hiding it behind label naming.
+- **Fix**: `extract_signals` now injects a store profile into the system prompt
+  (`DEFAULT_STORE_CONTEXT`, single-store in Phase 1, per-store in Phase 2), making
+  direction well-posed; the paraphrase set is ASCII-only. Observed after the fix:
+  recall 1.00, per-paraphrase jaccard [1.0, 1.0], `EVAL_LLM OK`. The bounds were not
+  moved.
+- **Doctrine link**: the eval bound caught it before any release claim (EVAL.md is the
+  gate); Standard 1 (root cause: the task definition, not a retry loop); the
+  canonicalize-then-compare rule (model-invented labels are not stable identity) is what
+  made the failure visible and diagnosable.

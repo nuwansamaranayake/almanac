@@ -29,7 +29,7 @@ contract ships with the LLM stage).
          GET read), envelopes (POST compute / GET read, signals surfaced beside),
          autopsy, signals (key-gated POST / keyless GET); CLI `python -m app.cli plan`;
          smoke = real deterministic loop keyless; Dockerfile migrate-on-start
-- [ ] M6  flywheel: engine/signals (LLM context sensor via gateway, strict JSON schema,
+- [x] M6  flywheel: engine/signals (LLM context sensor via gateway, strict JSON schema,
          enum'd signal types = canonical anchors, span + date gates);
          contracts/context-sensor-stability.yaml validated against Seismograph's DSL;
          key-gated eval_llm observed with a real key
@@ -68,4 +68,4 @@ contract ships with the LLM stage).
 
 ## Next
 
-M6: flywheel — Seismograph contract validated + key-gated eval_llm observed.
+M7: CI eval flip + docs truth pass.

@@ -7,6 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- Adversarial review wave (7 confirmed findings, see FAILURES.md FAIL-0006):
+  - `POST /api/v1/autopsy` now verifies an explicit `forecast_id` belongs to the requested
+    `sku_id` (typed 422) instead of silently scoring a cross-SKU forecast against the wrong
+    SKU's actuals, and returns a typed 404 (not a TypeError 500) for a nonexistent
+    `forecast_id`.
+  - `POST /api/v1/signals` no longer runs the network LLM call inside an open DB
+    session/transaction: the SKU check runs in a short first session, the gateway call runs
+    with no session open, and results are inserted in a separate write transaction — a slow
+    provider response can no longer pin a pooled Postgres connection.
+  - CSV ingest rejects a blank or missing `stockout` cell with the row-numbered
+    `IngestError` instead of silently importing it as `False` (which skewed the
+    censored-demand repair).
+  - Packaging: setuptools now auto-discovers `app*`, so wheels / non-editable installs ship
+    `app.engine` (the explicit `packages = ["app"]` list silently dropped it).
+  - CI test job installs the same pinned groundwork ref as pyproject/eval
+    (`nuwansamaranayake/groundwork@v0.1.0`); the `|| echo` failure-swallow and the dead
+    minimal-deps fallback are gone — an install failure fails the job loudly.
+  - `scripts/check_migrations.py` hard-fails when `EXPECTED_TABLE_COUNT` is unset or not a
+    positive integer instead of printing `MIGRATION OK` as a vacuous check (Standard 4).
+  - Added `.dockerignore` so `.git`, `.env`, caches, and loop state never enter the image
+    build context.
+
 ### Added
 - Phase 1 core loop (branch `phase-1`): CSV sales ingest with all-or-nothing validation,
   censored-demand repair (same-weekday median rule, `repaired = max(observed, imputed)`,

@@ -100,3 +100,35 @@ the *diagnosed* root cause separately (Standard 5).
 - **Doctrine link**: Standard 2 (smoke against a real instance is exactly where
   clean-room assumptions die) and Standard 5 (documented what was actually broken — the
   test — versus what was reported — the loop).
+
+## FAIL-0006 — Adversarial review wave: 7 confirmed findings before release
+
+- **Date**: 2026-07-27
+- **Surface**: `app/routes.py`, `app/engine/ingest.py`, `pyproject.toml`,
+  `.github/workflows/ci.yml`, `scripts/check_migrations.py`.
+- **Reported symptom**: None — every finding was latent. An adversarial code review of the
+  Phase 1 loop confirmed 7 defects (3 major, 4 minor) that all gates had passed over.
+- **Worst findings**:
+  - `POST /api/v1/autopsy` never verified that an explicit `forecast_id` belonged to the
+    requested `sku_id`, so a cross-SKU forecast was silently scored against the wrong
+    SKU's actuals with a 200 response — a wrong-number, not an error (major).
+  - `_load_forecast` subscripted the `None` from `.mappings().first()` for a nonexistent
+    user-supplied `forecast_id`: an unhandled TypeError 500 instead of a typed 404,
+    violating Standard 3 (major).
+  - `[tool.setuptools] packages = ["app"]` omitted `app.engine`, so any wheel or
+    non-editable install shipped without the deterministic engine; the Docker image only
+    worked because `COPY . .` shadowed the broken site-packages install (major).
+  - Plus: blank/missing `stockout` silently imported as `False`; the LLM call ran inside
+    an open DB transaction; the CI test job swallowed install failures with `|| echo`;
+    `check_migrations.py` degraded to a vacuous check when `EXPECTED_TABLE_COUNT` was
+    unset.
+- **Root cause**: Happy-path blindness — every endpoint was exercised through the loop's
+  own derivation (`_latest_forecast_id`), never with adversarial user-supplied ids or
+  truncated input; and infrastructure checks trusted their configuration to exist.
+- **Fix**: All 7 findings fixed at the root with regression tests (cross-SKU 422,
+  missing-forecast 404, blank/truncated stockout rejection, LLM-call-outside-session
+  assertion). One refuted claim (keyless GET signals) was confirmed as documented design,
+  not a defect.
+- **Doctrine link**: Standard 3 (fail loud with a typed error), Standard 4 (assert the
+  table count — a gate that can silently skip itself is not a gate), and the review-before-
+  release rule: the adversarial pass caught all of this before any release claim.

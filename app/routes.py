@@ -208,7 +208,8 @@ def create_forecast(body: ForecastIn, authorization: str | None = Header(default
 
 
 @router.get("/forecasts/{sku_id}")
-def get_forecast(sku_id: int):
+def get_forecast(sku_id: int, authorization: str | None = Header(default=None)):
+    _auth(authorization)
     with db.get_session() as s:
         _require_sku(s, sku_id)
         fid = _latest_forecast_id(s, sku_id)
@@ -264,7 +265,8 @@ def create_envelope(body: EnvelopeIn, authorization: str | None = Header(default
 
 
 @router.get("/envelopes/{sku_id}")
-def get_envelope(sku_id: int):
+def get_envelope(sku_id: int, authorization: str | None = Header(default=None)):
+    _auth(authorization)
     with db.get_session() as s:
         _require_sku(s, sku_id)
         row = s.execute(sa.select(db.action_envelopes)
@@ -343,7 +345,8 @@ def create_signals(body: SignalIn, authorization: str | None = Header(default=No
 
 
 @router.get("/signals")
-def list_signals(sku_id: int | None = None):
+def list_signals(sku_id: int | None = None, authorization: str | None = Header(default=None)):
+    _auth(authorization)
     with db.get_session() as s:
         q = sa.select(db.demand_signals).order_by(db.demand_signals.c.id)
         if sku_id is not None:

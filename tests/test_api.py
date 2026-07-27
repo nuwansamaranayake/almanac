@@ -195,3 +195,18 @@ def test_bearer_auth_enforced_when_token_set(client, monkeypatch):
     assert client.post("/api/v1/ingest", json={"csv_text": _csv(7)}).status_code == 401
     assert client.post("/api/v1/ingest", json={"csv_text": _csv(7)},
                        headers={"Authorization": "Bearer sekrit"}).status_code == 201
+
+
+def test_business_reads_require_bearer_when_token_set(client, monkeypatch):
+    """GET a stored forecast must not be world-readable in production.
+
+    Found by the production business-loop audit: this endpoint served real business
+    data to an unauthenticated caller over the public internet. Reads are now gated by
+    the same bearer check as writes; auth stays off only while the token is empty
+    (development semantics).
+    """
+    from app.config import settings
+    monkeypatch.setattr(settings, "smoke_test_token", "sekrit")
+    assert client.get("/api/v1/forecasts/1").status_code == 401
+    assert client.get(
+        "/api/v1/forecasts/1", headers={"Authorization": "Bearer sekrit"}).status_code != 401

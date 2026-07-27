@@ -73,6 +73,58 @@ def test_full_loop_ingest_forecast_envelope_autopsy(client):
     assert r.json()["days_scored"] == 7
 
 
+def test_autopsy_rejects_foreign_or_missing_forecast_id(client):
+    sku_id = _seed(client)
+    client.post("/api/v1/forecasts", json={"sku_id": sku_id, "horizon_days": 7})
+    other_csv = _csv(28).replace("T-SKU", "OTHER-SKU")
+    other_id = client.post("/api/v1/ingest",
+                           json={"csv_text": other_csv}).json()["skus"]["OTHER-SKU"]
+    other_fid = client.post("/api/v1/forecasts",
+                            json={"sku_id": other_id,
+                                  "horizon_days": 7}).json()["forecast_id"]
+    # another SKU's forecast must never be scored against this SKU's actuals
+    r = client.post("/api/v1/autopsy", json={"sku_id": sku_id, "forecast_id": other_fid})
+    assert r.status_code == 422
+    assert "different sku_id" in r.json()["detail"]
+    # a nonexistent forecast_id is a typed 404, not a TypeError 500
+    r = client.post("/api/v1/autopsy", json={"sku_id": sku_id, "forecast_id": 999999})
+    assert r.status_code == 404
+    assert r.json()["detail"] == "forecast not found"
+
+
+def test_signals_llm_call_runs_outside_db_session(client, monkeypatch):
+    """The network LLM call must never run inside an open DB session/transaction."""
+    from contextlib import contextmanager
+
+    from app import routes
+    from app.config import settings
+
+    monkeypatch.setattr(settings, "openrouter_api_key", "test-key")
+    monkeypatch.setattr(routes, "_gateway", lambda: object())
+    real_get_session = db.get_session
+    state = {"open": 0, "during_llm": None}
+
+    @contextmanager
+    def counting_get_session():
+        with real_get_session() as s:
+            state["open"] += 1
+            try:
+                yield s
+            finally:
+                state["open"] -= 1
+
+    monkeypatch.setattr(db, "get_session", counting_get_session)
+
+    def stub_extract(gateway, model, note, source):
+        state["during_llm"] = state["open"]
+        return []
+
+    monkeypatch.setattr(routes, "extract_signals", stub_extract)
+    r = client.post("/api/v1/signals", json={"note": "street festival next weekend"})
+    assert r.status_code == 201, r.text
+    assert state["during_llm"] == 0       # no pooled connection pinned during the call
+
+
 def test_repair_persists_the_documented_rule(client):
     sku_id = _seed(client)
     with db.get_session() as s:

@@ -152,6 +152,8 @@ def ingest(body: IngestIn, authorization: str | None = Header(default=None)):
 def _load_forecast(s, forecast_id: int) -> Forecast:
     f = s.execute(sa.select(db.forecasts)
                   .where(db.forecasts.c.id == forecast_id)).mappings().first()
+    if f is None:
+        raise HTTPException(status_code=404, detail="forecast not found")
     points = s.execute(sa.select(db.forecast_points)
                        .where(db.forecast_points.c.forecast_id == forecast_id)
                        .order_by(db.forecast_points.c.target_date)).mappings().all()
@@ -279,7 +281,19 @@ def autopsy(body: AutopsyIn, authorization: str | None = Header(default=None)):
     _auth(authorization)
     with db.get_session() as s:
         _require_sku(s, body.sku_id)
-        fid = body.forecast_id or _latest_forecast_id(s, body.sku_id)
+        if body.forecast_id is not None:
+            owner = s.execute(sa.select(db.forecasts.c.sku_id)
+                              .where(db.forecasts.c.id == body.forecast_id)).first()
+            if owner is None:
+                raise HTTPException(status_code=404, detail="forecast not found")
+            if owner.sku_id != body.sku_id:
+                raise HTTPException(
+                    status_code=422,
+                    detail="forecast_id belongs to a different sku_id; an autopsy scores "
+                           "a forecast against its own SKU's actuals")
+            fid = body.forecast_id
+        else:
+            fid = _latest_forecast_id(s, body.sku_id)
         if fid is None:
             raise HTTPException(status_code=404, detail="sku has no forecast to autopsy")
         fc = _load_forecast(s, fid)
@@ -299,11 +313,15 @@ def autopsy(body: AutopsyIn, authorization: str | None = Header(default=None)):
 def create_signals(body: SignalIn, authorization: str | None = Header(default=None)):
     _auth(authorization)
     gateway = _gateway()
-    with db.get_session() as s, s.begin():
-        if body.sku_id is not None:
+    if body.sku_id is not None:
+        with db.get_session() as s:
             _require_sku(s, body.sku_id)
-        signals = extract_signals(gateway, settings.llm_model_extraction, body.note,
-                                  body.source)
+    # The network LLM call runs with NO database session open: a slow provider response
+    # must never pin a pooled Postgres connection (inputs first, then the call, then a
+    # separate write transaction for the results).
+    signals = extract_signals(gateway, settings.llm_model_extraction, body.note,
+                              body.source)
+    with db.get_session() as s, s.begin():
         stored = []
         for sig in signals:
             span = sig.core.evidence_ref.span

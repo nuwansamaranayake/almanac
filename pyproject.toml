@@ -31,8 +31,10 @@ dependencies = [
 [project.optional-dependencies]
 dev = ["pytest", "ruff"]
 
-[tool.setuptools]
-packages = ["app"]
+# Automatic discovery so subpackages (app.engine) ship in wheels / non-editable installs;
+# an explicit non-recursive list silently dropped app.engine from site-packages.
+[tool.setuptools.packages.find]
+include = ["app*"]
 
 [tool.ruff]
 line-length = 100

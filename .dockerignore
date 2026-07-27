@@ -1,0 +1,11 @@
+# Keep secrets, VCS history, and local tooling state out of the image build context.
+.git
+.env
+.venv
+__pycache__
+*.pyc
+.pytest_cache
+.ruff_cache
+.planning
+LOOP_STATE.md
+.claude

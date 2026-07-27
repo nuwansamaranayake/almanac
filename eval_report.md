@@ -12,5 +12,3 @@ SKU-ICE-500: planted stockout days=5, repair MAPE=0.0546, forecast MAPE=0.0979, 
 | forecast_mape | 0.0862 | <= 0.25 | PASS |
 | envelope_monotonicity | 1.0000 | >= 1.0 | PASS |
 | envelope_sanity | 1.0000 | >= 1.0 | PASS |
-
-key-gated context-sensor section: run scripts/eval_llm.py (not part of this deterministic report)

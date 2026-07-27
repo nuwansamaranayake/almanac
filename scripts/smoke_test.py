@@ -6,6 +6,7 @@ is needed: the deterministic loop is the product's keyless path, not a mock.
 """
 import os
 import sys
+import time
 from datetime import date, timedelta
 
 import httpx
@@ -16,6 +17,10 @@ HEADERS = {"Authorization": f"Bearer {TOKEN}"}
 
 START = date(2026, 6, 1)                       # a Monday
 LEVELS = [12, 14, 16, 16, 18, 30, 24]          # weekday-shaped demand
+# Run-unique SKU: the smoke runs against a persistent database, and ingest recomputes
+# repair over the FULL stored history for a SKU — reusing one key across runs made the
+# repaired-day count grow (FAILURES.md FAIL-0005). A fresh key keeps assertions exact.
+SKU = f"SMOKE-{int(time.time())}"
 
 
 def _csv(days: int, first_day: date, stockout_day: int | None) -> str:
@@ -24,10 +29,10 @@ def _csv(days: int, first_day: date, stockout_day: int | None) -> str:
         d = first_day + timedelta(days=i)
         units = LEVELS[d.weekday()]
         if i == stockout_day:
-            rows.append(f"SMOKE-SKU,{d.isoformat()},2,1,,")
+            rows.append(f"{SKU},{d.isoformat()},2,1,,")
         else:
             cost = "1.0,2.5" if i == 0 else ","
-            rows.append(f"SMOKE-SKU,{d.isoformat()},{units},0,{cost}")
+            rows.append(f"{SKU},{d.isoformat()},{units},0,{cost}")
     return "\n".join(rows) + "\n"
 
 
@@ -52,7 +57,7 @@ def main():
 
     # 1. Ingest 4 weeks of history with one planted stockout day; repair runs inline.
     ing = post("/api/v1/ingest", {"csv_text": _csv(28, START, stockout_day=7)})
-    sku_id = ing["skus"]["SMOKE-SKU"]
+    sku_id = ing["skus"][SKU]
     assert ing["records"] == 28 and ing["stockout_days"] == 1
     assert ing["repaired_days"] == 28, ing
 

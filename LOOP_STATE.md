@@ -34,7 +34,7 @@ contract ships with the LLM stage).
          contracts/context-sensor-stability.yaml validated against Seismograph's DSL;
          key-gated eval_llm observed with a real key
 - [x] M7  CI eval -> "eval (required)"; README/contracts.md/CHANGELOG/EVAL.md truth pass
-- [ ] FINAL gate.py GATE OK; check_migrations MIGRATION OK: 9; prod-guard (demo 503 +
+- [x] FINAL gate.py GATE OK; check_migrations MIGRATION OK: 9; prod-guard (demo 503 +
          real GET 200 under APP_ENV=production); byte-reproducibility (two eval runs, cmp)
 
 ## DECISION log
@@ -68,4 +68,17 @@ contract ships with the LLM stage).
 
 ## Next
 
-FINAL: run all gates and record observed results.
+GATES_PASSED — all Phase 1 gates observed green on 2026-07-27:
+- `python scripts/gate.py` -> GATE ruff/pytest/smoke/eval PASS, GATE OK, twice in a row
+  (the first re-run caught a smoke idempotency bug, FAILURES.md FAIL-0005, fixed at root).
+- `alembic upgrade head` + `scripts/check_migrations.py` -> MIGRATION OK: 9 tables against
+  the throwaway verification Postgres (port 55435).
+- Prod-guard under APP_ENV=production -> `/api/v1/demo` 503 (typed detail) AND
+  `GET /api/v1/forecasts/{sku_id}` 200 with 7 real points.
+- Byte-reproducibility -> two consecutive `scripts/eval.py` runs, `cmp` identical.
+- Key-gated `scripts/eval_llm.py` observed live (google/gemini-2.5-flash): recall 1.00,
+  paraphrase jaccard [1.0, 1.0] (first run failed honestly: FAIL-0004).
+
+Phase 2 picks up from ROADMAP.md: Signal Scout sources (weather/events), owner
+confirmation surfaces, quarantine + backtest arena (signals start earning influence),
+order drafts with human approval.

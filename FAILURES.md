@@ -79,3 +79,24 @@ the *diagnosed* root cause separately (Standard 5).
   gate); Standard 1 (root cause: the task definition, not a retry loop); the
   canonicalize-then-compare rule (model-invented labels are not stable identity) is what
   made the failure visible and diagnosable.
+
+## FAIL-0005 — Gate re-run: smoke failed with repaired_days=35 where 28 was asserted
+
+- **Date**: 2026-07-27
+- **Surface**: `scripts/smoke_test.py` via `scripts/gate.py` (second full gate run of the
+  session, against the same persistent Postgres).
+- **Reported symptom**: `GATE FAIL: smoke ... 'repaired_days': 35` — the first gate run had
+  passed with identical code.
+- **Diagnosed cause**: The smoke test reused the fixed SKU key `SMOKE-SKU` and asserted
+  `repaired_days == 28` after ingesting 28 days. But the previous smoke run had already
+  stored 28 history days plus 7 actuals for that SKU, and `POST /api/v1/ingest`
+  deliberately recomputes the repaired series over the SKU's FULL stored history
+  (idempotent by (sku, date), cumulative by design). 28 + 7 = 35. The product behaved
+  correctly; the smoke assertion assumed a clean database it has no right to assume.
+- **Root cause**: A test-side hidden-state assumption (fresh DB per run), not an
+  application defect.
+- **Fix**: The smoke test now mints a run-unique SKU key per invocation, keeping every
+  assertion exact against a persistent database. Gate re-run observed green twice in a row.
+- **Doctrine link**: Standard 2 (smoke against a real instance is exactly where
+  clean-room assumptions die) and Standard 5 (documented what was actually broken — the
+  test — versus what was reported — the loop).

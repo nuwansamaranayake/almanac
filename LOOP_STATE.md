@@ -23,7 +23,7 @@ contract ships with the LLM stage).
          (forecast vs actual: error, APE, band coverage) (+tests)
 - [x] M4  scripts/eval.py: deterministic keyless harness against the pre-written EVAL.md
          bounds; byte-reproducible report; loud key-gated note
-- [ ] M5  schema + alembic 0002 (skus, sales_records, stockout_flags, repaired_demand,
+- [x] M5  schema + alembic 0002 (skus, sales_records, stockout_flags, repaired_demand,
          forecasts, forecast_points, action_envelopes, demand_signals)
          EXPECTED_TABLE_COUNT=9; API: ingest (keyless CSV), forecasts (POST compute /
          GET read), envelopes (POST compute / GET read, signals surfaced beside),
@@ -68,4 +68,4 @@ contract ships with the LLM stage).
 
 ## Next
 
-M5: schema + alembic + API + CLI + smoke (keyless real-processing loop).
+M6: flywheel — Seismograph contract validated + key-gated eval_llm observed.

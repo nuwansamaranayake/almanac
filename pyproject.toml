@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "almanac"
-version = "0.3.0"
+version = "0.3.1"
 description = "Smart inventory forecasting for retail: the LLM as a context sensor over a deterministic core."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -35,6 +35,9 @@ dev = ["pytest", "ruff"]
 # an explicit non-recursive list silently dropped app.engine from site-packages.
 [tool.setuptools.packages.find]
 include = ["app*"]
+
+[tool.setuptools.package-data]
+app = ["static/*.html"]
 
 [tool.ruff]
 line-length = 100

@@ -8,6 +8,7 @@ at `/openapi.json`.
 
 | Frontend call (Phase 2) | Method | Path | Status | Notes |
 |---|---|---|---|---|
+| Front page (browser) | GET | `/` | none | Self-contained HTML: thesis, what it measures, the EVAL.md limits sentence, the endpoint list, build stamp. Public by design. |
 | Liveness/readiness poll | GET | `/health` | implemented | Returns `{status, env}`. No auth required. |
 | Demo data load | GET | `/api/v1/demo` | implemented | Returns `{items: [...]}` from `data/synthetic/`. Development-only; responds 503 outside `development`. |
 | — | GET | `/openapi.json` | implemented | OpenAPI schema, served by FastAPI. CI diffs this file against it. |

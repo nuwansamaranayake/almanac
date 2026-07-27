@@ -39,6 +39,15 @@ recall >= 0.5 and paraphrase anchor Jaccard (min) >= 0.6 — the same invariant 
 `contracts/context-sensor-stability.yaml` (Seismograph DSL). Never a required keyless check,
 never a silent skip: the deterministic report states loudly whether the key-gated section ran.
 
+## Published limits
+
+This sentence is what the root page publishes, verbatim. The gate fails if the page and this block drift apart.
+
+<!-- LIMITS -->
+On a seeded synthetic store with planted stockouts, censored-demand repair lands within 6.9% of the planted true demand (MAPE 0.0687 against a 0.20 bound) and the forecast within 8.6% on held-out days (MAPE 0.0862 against a 0.25 bound), with order envelopes always correctly ordered and monotone in service level (1.0); the generator is synthetic and stationary, so it does not measure accuracy against real retail demand, promotions or supply shocks.
+<!-- /LIMITS -->
+
+
 ## What good means
 
 Almanac is good when its numbers beat the naive baseline, when the LLM signal layer's contribution is

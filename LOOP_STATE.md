@@ -33,7 +33,7 @@ contract ships with the LLM stage).
          enum'd signal types = canonical anchors, span + date gates);
          contracts/context-sensor-stability.yaml validated against Seismograph's DSL;
          key-gated eval_llm observed with a real key
-- [ ] M7  CI eval -> "eval (required)"; README/contracts.md/CHANGELOG/EVAL.md truth pass
+- [x] M7  CI eval -> "eval (required)"; README/contracts.md/CHANGELOG/EVAL.md truth pass
 - [ ] FINAL gate.py GATE OK; check_migrations MIGRATION OK: 9; prod-guard (demo 503 +
          real GET 200 under APP_ENV=production); byte-reproducibility (two eval runs, cmp)
 
@@ -68,4 +68,4 @@ contract ships with the LLM stage).
 
 ## Next
 
-M7: CI eval flip + docs truth pass.
+FINAL: run all gates and record observed results.

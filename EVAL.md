@@ -3,9 +3,16 @@
 Releases are gated on measured behavior, not vibes. `make eval` runs the suite below and must pass
 its thresholds before a release is cut.
 
-**Status: not yet implemented.** The harness intentionally raises `NotImplementedError` until the
-Phase 1 statistical core exists (see ROADMAP.md). The numbers below are the targets that harness will
-enforce once wired — they are goals, not achieved measurements. No eval report has been published yet.
+**Status: Phase 1 harness implemented and passing.** `scripts/eval.py` runs the deterministic
+suite below against the pre-written thresholds and exits nonzero on any miss. Observed on
+2026-07-27 (fixed seeds, two consecutive runs byte-identical): repair MAPE 0.0687, forecast
+MAPE 0.0862, envelope monotonicity 1.0, envelope sanity 1.0 — report committed as
+`eval_report.md`. The key-gated `scripts/eval_llm.py` was run for real through the gateway
+(google/gemini-2.5-flash): planted-anchor recall 1.00, paraphrase anchor jaccard 1.0
+(`eval_report_llm.md`); its first run failed and the diagnosis is FAILURES.md FAIL-0004.
+The sections following the thresholds describe the full evaluation program this repo grows
+into (M5-class backtests, planted-signal recovery, decision simulation); those are Phase 2+
+targets, not current measurements.
 
 ## Phase 1 acceptance thresholds (written before the harness, 2026-07-27)
 

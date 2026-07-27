@@ -7,7 +7,40 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Phase 1 core loop (branch `phase-1`): CSV sales ingest with all-or-nothing validation,
+  censored-demand repair (same-weekday median rule, `repaired = max(observed, imputed)`,
+  documented in `app/engine/repair.py`), seasonal weekday forecast core with empirical
+  P10/P50/P90 intervals, newsvendor-style action envelopes with a regret note per bound,
+  and per-period miss-autopsy stubs. Pure stdlib arithmetic; the LLM has no path into it.
+- Persisted API loop: `POST /api/v1/ingest`, `POST+GET /api/v1/forecasts`,
+  `POST+GET /api/v1/envelopes` (stored signals surfaced beside the envelope, never applied
+  to quantities in Phase 1), `POST /api/v1/autopsy`, `POST /api/v1/signals` (key-gated,
+  typed 503 without a key) and `GET /api/v1/signals`. Bearer auth on mutations when
+  `SMOKE_TEST_TOKEN` is set. CLI: `python -m app.cli plan` (keyless, serverless).
+- Schema + alembic `0002_real_schema`: skus, sales_records, stockout_flags,
+  repaired_demand, forecasts, forecast_points, action_envelopes, demand_signals —
+  8 app tables + alembic_version, `EXPECTED_TABLE_COUNT=9` asserted after migration
+  (observed `MIGRATION OK: 9 tables`). Dockerfile migrates and asserts before serving.
+- Deterministic eval harness meeting the pre-written EVAL.md bounds. Observed: repair MAPE
+  0.0687 (bound 0.20), forecast MAPE 0.0862 (bound 0.25), envelope monotonicity 1.0,
+  envelope sanity 1.0; report byte-reproducible (two runs, `cmp` identical).
+- LLM context sensor (`app/engine/signals.py`) through the groundwork gateway with a strict
+  JSON schema; canonical anchors are the closed enums `signal_type:direction`. Seismograph
+  contract `contracts/context-sensor-stability.yaml` (validated against the Seismograph DSL
+  loader, plan_id `88188a950fbce240`). Key-gated `scripts/eval_llm.py` observed live with
+  google/gemini-2.5-flash: planted-anchor recall 1.00, paraphrase jaccard min 1.0. Its
+  first run failed at jaccard 0.00 — root-caused and documented as FAILURES.md FAIL-0004
+  (store context injected into the sensing prompt; bounds unmoved).
+- Smoke test now drives the real keyless loop end to end: ingest with a planted stockout ->
+  repair -> forecast -> envelope -> actuals -> autopsy.
+
 ### Changed
+- CI eval job flipped to `eval (required)` (`continue-on-error` removed): a missed bound
+  fails the build. Lean keyless deps (`pydantic`, `httpx`, `pyyaml`, pinned groundwork).
+- README/EVAL.md/contracts.md truth pass: status reflects the built Phase 1 loop with the
+  observed numbers; endpoint rows flipped to implemented; order-draft approval moved
+  honestly to Phase 2 (no owner-confirmation surfaces exist yet).
 - Dependency on `aignite-groundwork` switched from an editable path source to a pinned git
   dependency (`git+https://github.com/nuwansamaranayake/groundwork@v0.1.0`) so standalone clones and CI resolve
   it without a sibling checkout. PyPI publication planned at first release.

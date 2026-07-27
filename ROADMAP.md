@@ -10,19 +10,28 @@ carry the phase label and the milestone tracks its close.
 A rigorous deterministic forecaster with no LLM in the loop. A classical forecaster alone already
 beats what most small retailers use, so it ships first and stands on its own.
 
+**Status (2026-07-27): the Phase 1 cut is built and gated on branch `phase-1`.** Shipped:
+CSV ingest, stockout-censoring repair (documented same-weekday-median rule), a seasonal
+weekday forecast core with empirical P10/P50/P90 intervals, newsvendor-style action
+envelopes with regret notes, miss-autopsy stubs, and the eval harness passing its
+pre-written EVAL.md bounds (plus the key-gated context-sensor eval, run live). Items below
+marked "later" stay on this roadmap and are not claimed.
+
 Deliverables:
 
-- CSV / POS ingest for sales history and inventory.
-- Deterministic demand repair: stockout censoring detection, lost-sales estimation with explicit
-  assumptions, returns and bulk-order cleanup, per-SKU data-quality confidence.
-- Statistical core: seasonal decomposition, ETS, Croston-class intermittent methods, LightGBM with
-  engineered covariates, hierarchical reconciliation, quantile output (P10/P50/P90), versioned.
-- Inventory optimizer: newsvendor quantities, safety stock, reorder points against lead-time
-  distributions.
-- Action envelopes with intervals: recommended order, safe range, latest order date, cash required,
-  expected service level, downside exposure.
-- `make eval` harness wired to the acceptance thresholds in EVAL.md (currently raising
-  `NotImplementedError` until this phase lands).
+- CSV ingest for sales history. (shipped; POS connectors later)
+- Deterministic demand repair: stockout censoring repair with an explicit, documented
+  imputation rule. (shipped; lost-sales estimation refinements, returns and bulk-order
+  cleanup, per-SKU data-quality confidence: later)
+- Statistical core with quantile output (P10/P50/P90), versioned. (shipped as the seasonal
+  weekday method; seasonal decomposition, ETS, Croston-class intermittent methods,
+  LightGBM covariates, hierarchical reconciliation: later)
+- Inventory optimizer: newsvendor quantities at a chosen service level. (shipped; safety
+  stock and reorder points against lead-time distributions: later)
+- Action envelopes with intervals: order-quantity range with regret arithmetic per bound.
+  (shipped; latest order date and cash-required fields: later, with lead times)
+- `make eval` harness wired to the acceptance thresholds in EVAL.md. (shipped and passing;
+  a missed bound fails CI)
 
 ## Phase 2 — Signal Scout, backtest arena, and the frontend
 

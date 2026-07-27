@@ -1,9 +1,11 @@
 # Almanac
 
-> **Status: scaffold (v0.1).** The engineering harness is built and verified: live smoke test,
-> fail-loud guards, migration checks, CI. The architecture described below is the design being
-> built; Phase 1 is in progress. [ROADMAP.md](ROADMAP.md) shows what exists today versus what
-> is next.
+> **Status: Phase 1 core loop built (v0.1, branch phase-1).** CSV ingest, censored-demand
+> repair, the seasonal weekday forecast core with empirical P10/P50/P90 intervals,
+> newsvendor-style action envelopes with regret notes, miss-autopsy stubs, and the
+> key-gated LLM context sensor (signals stored and surfaced, never applied to numbers)
+> are implemented, tested, and gated. [ROADMAP.md](ROADMAP.md) shows what exists today
+> versus what is next.
 
 **Smart inventory forecasting for retail: the LLM as a context sensor over a deterministic core.**
 
@@ -49,14 +51,22 @@ model permanently away from the arithmetic.
 
 ## What exists today (verified)
 
-This scaffold's doctrine is already enforced, not promised. Three checks you can run in five minutes:
+The doctrine is enforced, not promised. Five checks you can run in a few minutes:
 
-1. `python scripts/smoke_test.py` against a running instance: hits real endpoints and asserts
-   non-empty, schema-valid data. Passes.
+1. `python scripts/smoke_test.py` against a running instance: drives the real keyless loop
+   (CSV ingest with a planted stockout, demand repair, quantile forecast, action envelope,
+   actuals arriving, autopsy) and asserts non-empty, schema-valid data at every step. Passes.
 2. Set `APP_ENV=production` and call `/api/v1/demo`: returns 503, because fixture data outside
-   development is forbidden by code, not by convention.
-3. `python scripts/eval.py`: raises loudly instead of passing vacuously. An eval that cannot
-   fail is theater; the real harness lands in Phase 1.
+   development is forbidden by code, not by convention. Real endpoints keep serving.
+3. `python scripts/eval.py`: the deterministic Phase 1 suite. Observed: repair MAPE 0.0687
+   (bound 0.20), forecast MAPE 0.0862 (bound 0.25), envelope monotonicity and sanity 1.0,
+   report byte-reproducible across runs. A missed bound fails CI: the eval job is required.
+4. `python -m app.cli plan --csv data/synthetic/sales_demo.csv --sku SKU-COLA-330`: repair,
+   forecast, and an action envelope with both regret notes, no server or key needed.
+5. `python scripts/eval_llm.py` (key-gated): the real context sensor measured through the
+   gateway. Observed with google/gemini-2.5-flash: planted-anchor recall 1.00, paraphrase
+   anchor jaccard 1.0 against the 0.6 contract bound. Its first run failed at 0.00 and the
+   diagnosis is public (FAILURES.md FAIL-0004); the bounds were not moved.
 
 ## The unique bet
 
@@ -70,14 +80,20 @@ source has no pitch to protect, so the public scoreboard becomes the feature.
 
 ## Quickstart (local, zero external keys)
 
-### Standalone clone
+### Fastest: the CLI needs no server, database, or key
 
 ```bash
 python -m venv .venv
 source .venv/bin/activate         # POSIX     (.venv\Scripts\activate on Windows)
 pip install -e .[dev]             # groundwork resolves from GitHub automatically
+python -m app.cli plan --csv data/synthetic/sales_demo.csv --sku SKU-COLA-330
+```
+
+### Standalone clone with the API
+
+```bash
 cp .env.example .env              # POSIX     (copy .env.example .env on Windows)
-uvicorn app.main:app --reload
+docker compose up -d              # Postgres + Redis + the service (migrates on start)
 ```
 
 ### Developing the whole portfolio (sibling checkout, editable)
@@ -88,14 +104,17 @@ pip install -e ../groundwork
 pip install -e .[dev]
 ```
 
-Then, in another shell:
+Then, against a running instance (started via compose above, or uvicorn with a migrated
+Postgres from `.env`):
 
 ```bash
-export API_PORT=8000 SMOKE_TEST_TOKEN=dev && python scripts/smoke_test.py   # POSIX -> SMOKE OK
-set API_PORT=8000 && set SMOKE_TEST_TOKEN=dev && python scripts/smoke_test.py  # Windows
+export API_PORT=8000 SMOKE_TEST_TOKEN=dev-smoke-token && python scripts/smoke_test.py   # POSIX -> SMOKE OK
+set API_PORT=8000 && set SMOKE_TEST_TOKEN=dev-smoke-token && python scripts/smoke_test.py  # Windows
 ```
 
-The `/api/v1/demo` endpoint serves the synthetic dataset in `data/synthetic/`: no OpenRouter key, Postgres, or Redis is needed to see the app respond. Those are required only for Phase 1 features (real extraction, persistence, migrations).
+The smoke test drives the whole keyless loop: ingest, repair, forecast, envelope, autopsy.
+No OpenRouter key is needed anywhere in it; the key unlocks only the LLM context sensor
+(`POST /api/v1/signals`), which refuses loudly without one instead of falling back.
 
 ## Demo
 

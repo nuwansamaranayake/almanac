@@ -17,7 +17,7 @@ contract ships with the LLM stage).
          engine/forecast: seasonal moving average with weekday seasonality + empirical
          prediction intervals (P10/P50/P90); engine/synth: seeded synthetic generator
          with known seasonality + planted stockouts (+tests)
-- [ ] M3  engine/optimizer: newsvendor-style action envelope (order-quantity range per
+- [x] M3  engine/optimizer: newsvendor-style action envelope (order-quantity range per
          SKU at a service level, monotone in service level, one-line regret note per
          bound, deterministic arithmetic); engine/autopsy: per-period miss stubs
          (forecast vs actual: error, APE, band coverage) (+tests)
@@ -68,4 +68,4 @@ contract ships with the LLM stage).
 
 ## Next
 
-M3: engine/optimizer + engine/autopsy with tests.
+M4: scripts/eval.py deterministic harness against the pre-written bounds.

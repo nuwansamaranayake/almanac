@@ -30,7 +30,7 @@ jobs:
           python -m pip install --upgrade pip
           # Same pinned ref as pyproject.toml and the eval job. An install failure fails
           # the job loudly — no fallback that would let pytest run against partial deps.
-          pip install "aignite-groundwork @ git+https://github.com/nuwansamaranayake/groundwork@v0.1.0"
+          pip install "aignite-groundwork @ git+https://github.com/nuwansamaranayake/groundwork@v0.1.1"
           pip install -e ".[dev]"
       - run: pytest
 
@@ -68,5 +68,5 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install "pydantic>=2" httpx pyyaml "aignite-groundwork @ git+https://github.com/nuwansamaranayake/groundwork@v0.1.0"
+      - run: pip install "pydantic>=2" httpx pyyaml "aignite-groundwork @ git+https://github.com/nuwansamaranayake/groundwork@v0.1.1"
       - run: python scripts/eval.py

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-07-23
+
 ### Fixed
 - Adversarial review wave (7 confirmed findings, see FAILURES.md FAIL-0006):
   - `POST /api/v1/autopsy` now verifies an explicit `forecast_id` belongs to the requested

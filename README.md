@@ -1,6 +1,6 @@
 # Almanac
 
-> **Status: Phase 1 core loop built (v0.1, branch phase-1).** CSV ingest, censored-demand
+> **Status: Phase 1 core loop released (v0.2.0).** CSV ingest, censored-demand
 > repair, the seasonal weekday forecast core with empirical P10/P50/P90 intervals,
 > newsvendor-style action envelopes with regret notes, miss-autopsy stubs, and the
 > key-gated LLM context sensor (signals stored and surfaced, never applied to numbers)

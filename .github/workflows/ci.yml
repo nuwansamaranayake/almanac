@@ -28,11 +28,10 @@ jobs:
       - name: Install groundwork + app
         run: |
           python -m pip install --upgrade pip
-          # groundwork resolves from a published wheel / git ref once the repos are pushed.
-          pip install "aignite-groundwork @ git+https://github.com/AiGNITE/groundwork@main" \
-            || echo "groundwork not yet published; falling back to minimal runtime deps"
-          pip install -e ".[dev]" \
-            || pip install fastapi "uvicorn[standard]" httpx pydantic pydantic-settings pytest
+          # Same pinned ref as pyproject.toml and the eval job. An install failure fails
+          # the job loudly — no fallback that would let pytest run against partial deps.
+          pip install "aignite-groundwork @ git+https://github.com/nuwansamaranayake/groundwork@v0.1.0"
+          pip install -e ".[dev]"
       - run: pytest
 
   smoke:

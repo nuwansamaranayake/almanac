@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-27
+
+> **BREAKING.** Business read endpoints now require the same bearer token as writes.
+> **Migration:** send `Authorization: Bearer $SMOKE_TEST_TOKEN` on GET requests too.
+> Unauthenticated reads previously returned data and now return 401. Development is
+> unaffected while the token is empty.
+
+### Eval
+- repair MAPE 0.0687 (<= 0.20), forecast MAPE 0.0862 (<= 0.25), envelope monotonicity 1.0,
+  envelope sanity 1.0. Byte-reproducible.
+
+### Changed
+- `scripts/gate.py` enumerates routes and fails on any unguarded non-public route.
+
 ### Security
 - Business read endpoints (GET /api/v1/forecasts/{sku}, /envelopes/{sku}, /signals) now require the same bearer token as writes. They
   previously served real production data to unauthenticated callers (FAILURES FAIL-0008).

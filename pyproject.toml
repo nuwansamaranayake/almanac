@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "almanac"
-version = "0.2.0"
+version = "0.3.0"
 description = "Smart inventory forecasting for retail: the LLM as a context sensor over a deterministic core."
 readme = "README.md"
 requires-python = ">=3.12"

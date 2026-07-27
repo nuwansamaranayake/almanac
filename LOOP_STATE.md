@@ -12,7 +12,7 @@ contract ships with the LLM stage).
 ## Milestones (commit each; gate.py after each)
 
 - [x] M1  EVAL.md numeric thresholds first; LOOP_STATE; branch phase-1
-- [ ] M2  engine/repair: censored-demand repair (stockout-flagged days imputed from
+- [x] M2  engine/repair: censored-demand repair (stockout-flagged days imputed from
          same-weekday medians of non-stockout days; repaired = max(observed, imputed));
          engine/forecast: seasonal moving average with weekday seasonality + empirical
          prediction intervals (P10/P50/P90); engine/synth: seeded synthetic generator
@@ -68,4 +68,4 @@ contract ships with the LLM stage).
 
 ## Next
 
-M2: engine/repair + engine/forecast + engine/synth with tests.
+M3: engine/optimizer + engine/autopsy with tests.

@@ -167,3 +167,13 @@ the *diagnosed* root cause separately (Standard 5).
   with an auth column: an endpoint nobody wrote down is an endpoint nobody audited. The
   production business-loop audit (curl with and WITHOUT a token) caught what six green
   CI runs could not.
+
+## Incident record
+
+The 2026-07-27 unauthenticated-reads incident, which affected this repo, is documented in the
+estate's operational repo:
+[portfolio-ops/docs/postmortem/2026-07-27-unauthenticated-reads.md](https://github.com/nuwansamaranayake/portfolio-ops/blob/main/docs/postmortem/2026-07-27-unauthenticated-reads.md)
+
+It covers the exposure window, the access-log finding (there were none), the data
+classification (synthetic only, proven by query), the root cause, and the controls now in
+place, including the `route_auth()` class check in `scripts/gate.py`.

@@ -21,7 +21,7 @@ contract ships with the LLM stage).
          SKU at a service level, monotone in service level, one-line regret note per
          bound, deterministic arithmetic); engine/autopsy: per-period miss stubs
          (forecast vs actual: error, APE, band coverage) (+tests)
-- [ ] M4  scripts/eval.py: deterministic keyless harness against the pre-written EVAL.md
+- [x] M4  scripts/eval.py: deterministic keyless harness against the pre-written EVAL.md
          bounds; byte-reproducible report; loud key-gated note
 - [ ] M5  schema + alembic 0002 (skus, sales_records, stockout_flags, repaired_demand,
          forecasts, forecast_points, action_envelopes, demand_signals)
@@ -68,4 +68,4 @@ contract ships with the LLM stage).
 
 ## Next
 
-M4: scripts/eval.py deterministic harness against the pre-written bounds.
+M5: schema + alembic + API + CLI + smoke (keyless real-processing loop).

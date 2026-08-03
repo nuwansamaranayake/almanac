@@ -1,12 +1,12 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import HTMLResponse
-from groundwork import Env
+from groundwork import build_version, Env
 from .config import settings
 from .fixtures import load_synthetic_fixture
 from .frontpage import render as render_front_page
 from .routes import router
 
-app = FastAPI(title="Almanac")
+app = FastAPI(title="Almanac", version=build_version())
 app.include_router(router)
 
 
